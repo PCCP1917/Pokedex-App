@@ -107,5 +107,5 @@ async def main (page: ft.Page):
     await page.add_async(Contenedor)
     await blink()
 
-
 ft.app(target = main)
+ass=1
