@@ -28,14 +28,24 @@ async def main (page: ft.Page):
             pokemon_actual-=1
         numero = (pokemon_actual%150)+1
         resultado= await peticion_url(f"https://pokeapi.co/api/v2/pokemon/{numero}")
-        datos = f"Name: {resultado['name']}\n \nAbilities: "
+        datos = f"Name: {resultado['name']}\nType:"
+        for elemento in resultado['types']:
+            habilidad = "-"+elemento['type']['name']
+            datos +=f"\n{habilidad}"
+        datos +=f"\nAbilities:" 
         for elemento in resultado['abilities']:
-            habilidad = elemento['ability']['name']
+            habilidad = "*"+elemento['ability']['name']
             datos +=f"\n{habilidad}" 
-        datos +=f"\nHeight:{resultado['height']}"    
+        datos +=f"\nHeight:{resultado['height']}"
+        datos +=f"\nWeight:{resultado['weight']}"        
         texto.value= datos
         sprite_url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{numero}.png"
         imagen.src=sprite_url
+        movimientos = f"Moves:"
+        for elemento in range(4):
+            move = ">"+resultado['moves'][elemento]['move']['name']
+            movimientos +=f"\n{move}"
+        texto2.value= movimientos
         await page.update_async()
     
     async def blink():
@@ -82,11 +92,18 @@ async def main (page: ft.Page):
     ])
     texto=ft.Text(value="...",
                   color=ft.colors.BLACK,
-                  size=22
+                  size=18
                   )
+    texto2=ft.Text(value="...",
+                  color=ft.colors.BLACK,
+                  size=18
+                  )
+    pantallaDesc=ft.Container(content=texto,padding=10,width=200,height=300)
+    pantallaMoves=ft.Container(content=texto2,padding=10,width=200,height=300)
+    PantallaRow=ft.Row(controls=[pantallaDesc,pantallaMoves])
     items_inferior=[
         ft.Container(width=50),#Margen Izquierdo
-        ft.Container(content=texto,padding=10,width=400,height=300,bgcolor=ft.colors.GREEN,border_radius=20), #Pantalla de descipcion
+        ft.Container(content=PantallaRow,padding=10,width=400,height=300,bgcolor=ft.colors.GREEN,border_radius=20), #Pantalla de descipcion
         ft.Container(content=flechas,width=80,height=120), #Selectores
         ft.Container(width=50)#Margen Derecho
     ]
@@ -108,4 +125,3 @@ async def main (page: ft.Page):
     await blink()
 
 ft.app(target = main)
-ass=1
